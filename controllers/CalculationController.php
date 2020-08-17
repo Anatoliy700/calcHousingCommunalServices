@@ -9,6 +9,7 @@ use app\Services\CalculateService;
 use yii\data\ActiveDataProvider;
 use yii\db\Connection;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 use yii\web\Request;
 use yii\web\Response;
 
@@ -28,6 +29,24 @@ class CalculationController extends Controller
         return $this->render('list', [
             'dataProvider' => $dataProvider,
         ]);
+    }
+
+    /**
+     * @param int $id
+     * @return string|Response
+     */
+    public function actionView(int $id)
+    {
+        try {
+            $model = $this->findModel($id);
+            $calculateService = new CalculateService($model);
+
+            return $this->render('view', ['calcService' => $calculateService]);
+        } catch (\Exception $e) {
+            $this->showMessage('error', $e->getMessage());
+
+            return $this->redirect(['list']);
+        }
     }
 
     /**
@@ -61,7 +80,7 @@ class CalculationController extends Controller
                     }
                     $transaction->commit();
 
-                    return $this->redirect(['list']);
+                    return $this->redirect(['view', 'id' => $calcModel->id]);
 
                 } else {
                     throw new \Exception();
@@ -85,6 +104,21 @@ class CalculationController extends Controller
             'metersModel' => $metersModel,
             'lastMetersModel' => $lastMetersModel,
         ]);
+    }
+
+
+    /**
+     * @param $id
+     * @return CalcResult
+     * @throws NotFoundHttpException
+     */
+    protected function findModel($id): CalcResult
+    {
+        if (($model = CalcResult::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 
     /**

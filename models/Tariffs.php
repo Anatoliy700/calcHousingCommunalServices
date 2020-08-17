@@ -62,12 +62,12 @@ class Tariffs extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            't1' => 'T1',
-            't2' => 'T2',
-            't3' => 'T3',
-            'col' => 'Col',
-            'hot' => 'Hot',
-            'sewerage' => 'Sewerage',
+            't1' => 'Электричество T1',
+            't2' => 'Электричество T2',
+            't3' => 'Электричество T3',
+            'col' => 'Холодная',
+            'hot' => 'Горячая',
+            'sewerage' => 'Канализация',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

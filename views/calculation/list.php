@@ -5,6 +5,7 @@
  * @var $dataProvider yii\data\ActiveDataProvider
  */
 
+use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\grid\SerialColumn;
 use yii\helpers\Html;
@@ -26,10 +27,14 @@ $this->title = 'Список расчетов';
             ['class' => SerialColumn::class],
             [
                 'attribute' => 'settlement_month',
-                'format' => ['date', 'php:F Y']
+                'format' => ['date', 'LLLL y']
             ],
             'total:currency',
-            'created_at'
+            'created_at:datetime',
+            [
+                'class' => ActionColumn::class,
+                'template' => '{view}'
+            ]
         ]
     ]) ?>
 </div>

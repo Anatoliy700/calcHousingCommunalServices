@@ -99,11 +99,11 @@ class CalcResult extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'current_meters_id' => 'Current Meters',
-            'previous_meters_id' => 'Previous Meters',
-            'tariff_id' => 'tariff_id',
+            'current_meters_id' => 'Текущие показания',
+            'previous_meters_id' => 'Предыдущие показания',
+            'tariff_id' => 'Тариф',
             'settlement_month' => 'Расчетный месяц',
-            'total' => 'Total',
+            'total' => 'Итого',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

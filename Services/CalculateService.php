@@ -4,6 +4,7 @@ namespace app\Services;
 
 use app\models\CalcResult;
 use yii\base\InvalidArgumentException;
+use yii\i18n\Formatter;
 
 class CalculateService
 {
@@ -35,6 +36,16 @@ class CalculateService
             }
             throw new \Exception($message);
         }
+    }
+
+    /**
+     * @param string $format
+     * @return string
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getSettlementMonth(string $format = 'LLLL y'): string
+    {
+        return \Yii::$app->formatter->asDate($this->calcResult->settlement_month, "{$format}");
     }
 
     /**
@@ -188,112 +199,125 @@ class CalculateService
     }
 
     /**
-     * @return float
+     * @param string $format
+     * @return string
      */
-    public function getTariffT1(): float
+    public function getTariffT1(string $format = 'raw'): string
     {
-        return $this->calcResult->tariff->t1;
+        return $this->format($this->calcResult->tariff->t1, $format);
     }
 
     /**
-     * @return float
+     * @param string $format
+     * @return string
      */
-    public function getTariffT2(): float
+    public function getTariffT2(string $format = 'raw'): string
     {
-        return $this->calcResult->tariff->t2;
+        return $this->format($this->calcResult->tariff->t2, $format);
     }
 
     /**
-     * @return float
+     * @param string $format
+     * @return string
      */
-    public function getTariffT3(): float
+    public function getTariffT3(string $format = 'raw'): string
     {
-        return $this->calcResult->tariff->t3;
+        return $this->format($this->calcResult->tariff->t3, $format);
     }
 
     /**
-     * @return float
+     * @param string $format
+     * @return string
      */
-    public function getTariffTCol(): float
+    public function getTariffCol(string $format = 'raw'): string
     {
-        return $this->calcResult->tariff->col;
+        return $this->format($this->calcResult->tariff->col, $format);
     }
 
     /**
-     * @return float
+     * @param string $format
+     * @return string
      */
-    public function getTariffHot(): float
+    public function getTariffHot(string $format = 'raw'): string
     {
-        return $this->calcResult->tariff->hot;
+        return $this->format($this->calcResult->tariff->hot, $format);
     }
 
     /**
-     * @return float
+     * @param string $format
+     * @return string
      */
-    public function getTariffSewerage(): float
+    public function getTariffSewerage(string $format = 'raw'): string
     {
-        return $this->calcResult->tariff->sewerage;
+        return $this->format($this->calcResult->tariff->sewerage, $format);
     }
 
     /**
-     * @return float
+     * @param string $format
+     * @return string
      * @throws \Exception
      */
-    public function getCostT1(): float
+    public function getCostT1(string $format = 'raw'): string
     {
-        return $this->getCostDiffMeters('t1');
+        return $this->format($this->getCostDiffMeters('t1'), $format);
     }
 
     /**
-     * @return float
+     * @param string $format
+     * @return string
      * @throws \Exception
      */
-    public function getCostT2(): float
+    public function getCostT2(string $format = 'raw'): string
     {
-        return $this->getCostDiffMeters('t2');
+        return $this->format($this->getCostDiffMeters('t2'), $format);
     }
 
     /**
-     * @return float
+     * @param string $format
+     * @return string
      * @throws \Exception
      */
-    public function getCostT3(): float
+    public function getCostT3(string $format = 'raw'): string
     {
-        return $this->getCostDiffMeters('t3');
+        return $this->format($this->getCostDiffMeters('t3'), $format);
     }
 
     /**
-     * @return float
+     * @param string $format
+     * @return string
      * @throws \Exception
      */
-    public function getCostCol(): float
+    public function getCostCol(string $format = 'raw'): string
     {
-        return $this->getCostDiffMeters('col');
+        return $this->format($this->getCostDiffMeters('col'), $format);
     }
 
     /**
-     * @return float
+     * @param string $format
+     * @return string
      * @throws \Exception
      */
-    public function getCostHot(): float
+    public function getCostHot(string $format = 'raw'): string
     {
-        return $this->getCostDiffMeters('hot');
+        return $this->format($this->getCostDiffMeters('hot'), $format);
     }
 
     /**
-     * @return float
+     * @param string $format
+     * @return string
      * @throws \Exception
      */
-    public function getCostSewerage(): float
+    public function getCostSewerage(string $format = 'raw'): string
     {
-        return $this->getCostDiffMeters('sewerage');
+        return $this->format($this->getCostDiffMeters('sewerage'), $format);
     }
 
     /**
-     * @return float
+     * @param string $format
+     * @return string
      * @throws \Exception
      */
-    public function getCostTotal(): float
+    public function getCostTotal(string $format = 'raw'): string
     {
         $total = 0;
         $attributes = ['t1', 't2', 't3', 'col', 'hot', 'sewerage'];
@@ -302,7 +326,7 @@ class CalculateService
             $total += $this->getCostDiffMeters($attribute);
         }
 
-        return $total;
+        return $this->format($total, $format);
     }
 
     /**
@@ -346,5 +370,51 @@ class CalculateService
         }
 
         return $diff;
+    }
+
+    /**
+     * @return CalcResult
+     */
+    public function getCalcResult(): CalcResult
+    {
+        return $this->calcResult;
+    }
+
+    /**
+     * @param string $attribute
+     * @return string
+     */
+    public function getLabel(string $attribute): string
+    {
+        $label = '';
+
+        $calcResult = $this->getCalcResult();
+        if ($calcResult->hasAttribute($attribute)) {
+            $label = $calcResult->getAttributeLabel($attribute);
+        } elseif ($calcResult->currentMeters->hasAttribute($attribute)) {
+            $label = $calcResult->currentMeters->getAttributeLabel($attribute);
+        } elseif ($calcResult->tariff->hasAttribute($attribute)) {
+            $label = $calcResult->tariff->getAttributeLabel($attribute);
+        }
+
+        return $label;
+    }
+
+    /**
+     * @param $value
+     * @param $format
+     * @return string
+     */
+    protected function format($value, $format)
+    {
+        return $this->getFormatter()->format($value, $format);
+    }
+
+    /**
+     * @return Formatter
+     */
+    protected function getFormatter(): Formatter
+    {
+        return \Yii::$app->formatter;
     }
 }
