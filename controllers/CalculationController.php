@@ -4,10 +4,12 @@ namespace app\controllers;
 
 use app\models\CalcResult;
 use app\models\MetersData;
-use app\models\Tariffs;
+use app\models\Tariff;
 use app\Services\CalculateService;
+use yii\base\ExitException;
 use yii\data\ActiveDataProvider;
 use yii\db\Connection;
+use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Request;
@@ -15,20 +17,24 @@ use yii\web\Response;
 
 class CalculationController extends Controller
 {
-    public $defaultAction = 'list';
 
     /**
      * @return string
+     * @throws ExitException
      */
-    public function actionList(): string
+    public function actionIndex(): string
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => CalcResult::find(),
-        ]);
+        try {
+            $dataProvider = new ActiveDataProvider([
+                'query' => CalcResult::find(),
+            ]);
 
-        return $this->render('list', [
-            'dataProvider' => $dataProvider,
-        ]);
+            return $this->render('index', [
+                'dataProvider' => $dataProvider,
+            ]);
+        } catch (Exception $e){
+               throw new ExitException('Не установлены миграции. Выполните в консоли "php yii migrate"');
+        }
     }
 
     /**
@@ -45,14 +51,14 @@ class CalculationController extends Controller
         } catch (\Exception $e) {
             $this->showMessage('error', $e->getMessage());
 
-            return $this->redirect(['list']);
+            return $this->redirect(['index']);
         }
     }
 
     /**
      * @return string|Response
      */
-    public function actionNewCalc()
+    public function actionCreate()
     {
         $calcModel = new CalcResult();
         $metersModel = new MetersData();
@@ -60,10 +66,10 @@ class CalculationController extends Controller
 
         try {
             if ($request->isPost && $metersModel->load($request->post()) && $calcModel->load($request->post()) && $metersModel->validate()) {
-                if (!$tariff = Tariffs::getLast()) {
+                if (!$tariff = Tariff::getLast()) {
                     $this->showMessage('warning', 'Не найден тариф');
 
-                    return $this->redirect(['tariffs/create']);
+                    return $this->redirect(['tariff/create']);
                 }
                 $transaction = $this->getDb()->beginTransaction();
                 if ($metersModel->save()) {
@@ -99,7 +105,7 @@ class CalculationController extends Controller
             return $this->redirect(['meters-data/create']);
         }
 
-        return $this->render('newCalc', [
+        return $this->render('create', [
             'calcModel' => $calcModel,
             'metersModel' => $metersModel,
             'lastMetersModel' => $lastMetersModel,

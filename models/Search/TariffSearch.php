@@ -2,14 +2,14 @@
 
 namespace app\models\Search;
 
-use app\models\Tariffs;
+use app\models\Tariff;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
  * TariffsSearch represents the model behind the search form of `app\models\Tariffs`.
  */
-class TariffsSearch extends Tariffs
+class TariffSearch extends Tariff
 {
     /**
      * {@inheritdoc}
@@ -41,7 +41,7 @@ class TariffsSearch extends Tariffs
      */
     public function search($params): ActiveDataProvider
     {
-        $query = Tariffs::find();
+        $query = Tariff::find();
 
         // add conditions that should always apply here
 

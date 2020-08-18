@@ -22,8 +22,8 @@ class m200813_161744_calc_result extends Migration
             'created_at' => $this->dateTime()->notNull(),
             'updated_at' => $this->dateTime()->notNull(),
             'FOREIGN KEY (current_meters_id) REFERENCES {{%meters_data}}(id) ON UPDATE CASCADE ON DELETE CASCADE',
-            'FOREIGN KEY (previous_meters_id) REFERENCES {{%meters_data}}(id) ON UPDATE CASCADE ON DELETE CASCADE',
-            'FOREIGN KEY (tariff_id) REFERENCES {{%tariffs}}(id) ON UPDATE CASCADE ON DELETE CASCADE',
+            'FOREIGN KEY (previous_meters_id) REFERENCES {{%meters_data}}(id) ON UPDATE RESTRICT ON DELETE RESTRICT',
+            'FOREIGN KEY (tariff_id) REFERENCES {{%tariffs}}(id) ON UPDATE RESTRICT ON DELETE RESTRICT',
         ]);
 
         $this->createIndex(

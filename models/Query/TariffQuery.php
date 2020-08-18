@@ -2,15 +2,15 @@
 
 namespace app\models\Query;
 
-use app\models\Tariffs;
+use app\models\Tariff;
 use yii\db\ActiveQuery;
 
 /**
  * This is the ActiveQuery class for [[\app\models\Tariffs]].
  *
- * @see \app\models\Tariffs
+ * @see \app\models\Tariff
  */
-class TariffsQuery extends ActiveQuery
+class TariffQuery extends ActiveQuery
 {
     /*public function active()
     {
@@ -19,7 +19,7 @@ class TariffsQuery extends ActiveQuery
 
     /**
      * {@inheritdoc}
-     * @return Tariffs[]|array
+     * @return Tariff[]|array
      */
     public function all($db = null)
     {
@@ -28,7 +28,7 @@ class TariffsQuery extends ActiveQuery
 
     /**
      * {@inheritdoc}
-     * @return Tariffs|array|null
+     * @return Tariff|array|null
      */
     public function one($db = null)
     {

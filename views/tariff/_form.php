@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Tariffs */
+/* @var $model app\models\Tariff */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="tariffs-form">
+<div class="tariff-form">
 
     <?php $form = ActiveForm::begin(); ?>
 

@@ -2,7 +2,6 @@
 
 namespace app\models;
 
-use app\Exceptions\NotFoundPreviewMetersDataException;
 use app\models\Query\MetersDataQuery;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -17,6 +16,7 @@ use yii\db\Expression;
  * @property int $t3
  * @property int $col
  * @property int $hot
+ * @property CalcResult $calcResult
  * @property string $created_at
  * @property string $updated_at
  */
@@ -87,6 +87,7 @@ class MetersData extends ActiveRecord
             't3' => 'Электричество T3',
             'col' => 'Холодная',
             'hot' => 'Горячая',
+            'monthCount' => 'Расчетный месяц',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
@@ -106,7 +107,25 @@ class MetersData extends ActiveRecord
      */
     public static function getLast(): ?self
     {
-       return $model = static::find()->last()->one();
+        return $model = static::find()->last()->one();
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCalcResult()
+    {
+        return $this->hasOne(CalcResult::class, ['current_meters_id' => 'id']);
+    }
+
+    /**
+     * @param string $format
+     * @return string
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getMonthCount(string $format = 'LLLL y'): string
+    {
+        return \Yii::$app->formatter->asDate($this->calcResult->settlement_month, $format);
     }
 
     /**

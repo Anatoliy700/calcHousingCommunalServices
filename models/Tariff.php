@@ -2,7 +2,7 @@
 
 namespace app\models;
 
-use app\models\Query\TariffsQuery;
+use app\models\Query\TariffQuery;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
@@ -20,7 +20,7 @@ use yii\db\Expression;
  * @property string $created_at
  * @property string $updated_at
  */
-class Tariffs extends ActiveRecord
+class Tariff extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -75,11 +75,11 @@ class Tariffs extends ActiveRecord
 
     /**
      * {@inheritdoc}
-     * @return TariffsQuery the active query used by this AR class.
+     * @return TariffQuery the active query used by this AR class.
      */
-    public static function find(): TariffsQuery
+    public static function find(): TariffQuery
     {
-        return new TariffsQuery(get_called_class());
+        return new TariffQuery(get_called_class());
     }
 
     /**

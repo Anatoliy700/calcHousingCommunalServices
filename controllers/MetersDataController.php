@@ -2,14 +2,13 @@
 
 namespace app\controllers;
 
-use Yii;
 use app\models\MetersData;
-use yii\base\Action;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * MetersDataController implements the CRUD actions for MetersData model.
@@ -27,13 +26,14 @@ class MetersDataController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['create'],
+                        'actions' => ['create', 'index', 'view'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['update', 'delete'],
+                        'roles' => ['@'],
                     ],
                 ],
-                'denyCallback' => function($rule, $action){
-                    /** @var Action $action */
-                    $action->controller->goHome();
-                }
             ],
             'verbs' => [
                 'class' => VerbFilter::class,
@@ -115,11 +115,18 @@ class MetersDataController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+
+        try {
+            $this->findModel($id)->delete();
+        } catch (\Throwable $e) {
+            Yii::$app->session->setFlash(
+                'error',
+                'Не возможно удалить показания счетчиков, привязанные к расчету как предыдущие'
+            );
+        }
 
         return $this->redirect(['index']);
     }

@@ -18,7 +18,7 @@ $this->title = 'Список расчетов';
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Создать новый расчет', ['new-calc'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Создать новый расчет', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
@@ -27,14 +27,14 @@ $this->title = 'Список расчетов';
             ['class' => SerialColumn::class],
             [
                 'attribute' => 'settlement_month',
-                'format' => ['date', 'LLLL y']
+                'format' => ['date', 'LLLL y'],
             ],
             'total:currency',
             'created_at:datetime',
             [
                 'class' => ActionColumn::class,
-                'template' => '{view}'
-            ]
-        ]
+                'template' => '{view}',
+            ],
+        ],
     ]) ?>
 </div>

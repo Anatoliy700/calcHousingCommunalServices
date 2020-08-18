@@ -4,7 +4,7 @@ namespace app\models;
 
 use app\models\Query\CalcResultQuery;
 use app\models\Query\MetersDataQuery;
-use app\models\Query\TariffsQuery;
+use app\models\Query\TariffQuery;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -22,7 +22,7 @@ use yii\db\Expression;
  * @property string $created_at
  * @property string $updated_at
  *
- * @property Tariffs $tariff
+ * @property Tariff $tariff
  * @property MetersData $previousMeters
  * @property MetersData $currentMeters
  */
@@ -59,7 +59,7 @@ class CalcResult extends ActiveRecord
                 ['tariff_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => Tariffs::class,
+                'targetClass' => Tariff::class,
                 'targetAttribute' => ['tariff_id' => 'id'],
             ],
             [
@@ -112,11 +112,11 @@ class CalcResult extends ActiveRecord
     /**
      * Gets query for [[Tariff]].
      *
-     * @return ActiveQuery|TariffsQuery
+     * @return ActiveQuery|TariffQuery
      */
     public function getTariff()
     {
-        return $this->hasOne(Tariffs::class, ['id' => 'tariff_id']);
+        return $this->hasOne(Tariff::class, ['id' => 'tariff_id']);
     }
 
     /**

@@ -2,17 +2,18 @@
 
 namespace app\controllers;
 
+use app\models\Search\TariffSearch;
+use app\models\Tariff;
 use Yii;
-use app\models\Tariffs;
-use app\models\Search\TariffsSearch;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * TariffsController implements the CRUD actions for Tariffs model.
  */
-class TariffsController extends Controller
+class TariffController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -20,6 +21,16 @@ class TariffsController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::class,
+                'only' => ['update', 'delete'],
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
@@ -35,7 +46,7 @@ class TariffsController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new TariffsSearch();
+        $searchModel = new TariffSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -64,7 +75,7 @@ class TariffsController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Tariffs();
+        $model = new Tariff();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -100,11 +111,14 @@ class TariffsController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        try {
+            $this->findModel($id)->delete();
+        } catch (\Throwable $e) {
+            Yii::$app->session->setFlash('error', 'Не возможно удалить тариф привязанный к расчету');
+        }
 
         return $this->redirect(['index']);
     }
@@ -113,12 +127,12 @@ class TariffsController extends Controller
      * Finds the Tariffs model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Tariffs the loaded model
+     * @return Tariff the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Tariffs::findOne($id)) !== null) {
+        if (($model = Tariff::findOne($id)) !== null) {
             return $model;
         }
 
