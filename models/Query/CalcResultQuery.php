@@ -31,4 +31,12 @@ class CalcResultQuery extends \yii\db\ActiveQuery
     {
         return parent::one($db);
     }
+
+    /**
+     * @return $this
+     */
+    public function last(): self
+    {
+        return $this->addOrderBy(['id' => SORT_DESC])->limit(1);
+    }
 }

@@ -9,6 +9,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\helpers\FormatConverter;
 
 /**
  * This is the model class for table "{{%calc_result}}".
@@ -30,6 +31,9 @@ class CalcResult extends ActiveRecord
 {
     public const SCENARIO_SAVE = 'save';
 
+    public const DATE_FORMAT_SAVE = 'php:Y-m-d';
+    public const DATE_FORMAT_VIEW = 'LLLL y';
+
     /**
      * {@inheritdoc}
      */
@@ -40,6 +44,7 @@ class CalcResult extends ActiveRecord
 
     /**
      * {@inheritdoc}
+     * @throws \yii\base\InvalidConfigException
      */
     public function rules()
     {
@@ -47,7 +52,16 @@ class CalcResult extends ActiveRecord
             [['current_meters_id', 'previous_meters_id', 'tariff_id', 'settlement_month'], 'required'],
             [['total'], 'required', 'on' => static::SCENARIO_SAVE],
             [['current_meters_id', 'previous_meters_id', 'tariff_id'], 'integer'],
-            [['settlement_month'], 'date', 'format' => 'php:Y-m-d'],
+            [
+                ['settlement_month'],
+                'date',
+                'format' => static::DATE_FORMAT_SAVE,
+                'min' => $this->getNextMonth(),
+                'max' => $this->getNextMonth(),
+                'tooSmall' => 'Следующий месяц должен быть "' . $this->getNextMonth(static::DATE_FORMAT_VIEW) . '"',
+                'tooBig' => 'Следующий месяц должен быть "' . $this->getNextMonth(static::DATE_FORMAT_VIEW) . '"',
+                'on' => static::SCENARIO_SAVE,
+            ],
             [['created_at', 'updated_at'], 'safe'],
             [['total'], 'number'],
             [
@@ -110,6 +124,53 @@ class CalcResult extends ActiveRecord
     }
 
     /**
+     * @param string $format
+     * @return string|null
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getNextMonth(string $format = self::DATE_FORMAT_SAVE): ?string
+    {
+        $date = null;
+
+        if ($last = static::getLast()) {
+            $saveFormat = $this->prepareFormat(static::DATE_FORMAT_SAVE);
+            $dateTime = \DateTime::createFromFormat($saveFormat, $last->settlement_month);
+            $dateTime->modify('+1 month');
+            $date = \Yii::$app->formatter->asDate($dateTime, $format);
+        }
+
+        return $date;
+    }
+
+    /**
+     * @param string $format
+     * @return string
+     */
+    protected function prepareFormat(string $format): string
+    {
+        if (strncmp($format, 'php:', 4) === 0) {
+            $format = substr($format, 4);
+        } else {
+            $format = FormatConverter::convertDateIcuToPhp($format, 'date');
+        }
+
+        return $format;
+    }
+
+    /**
+     * @return $this
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function fillSettleMonth(): self
+    {
+        if ($nextMonth = $this->getNextMonth()) {
+            $this->settlement_month = $nextMonth;
+        }
+
+        return $this;
+    }
+
+    /**
      * Gets query for [[Tariff]].
      *
      * @return ActiveQuery|TariffQuery
@@ -137,6 +198,14 @@ class CalcResult extends ActiveRecord
     public function getCurrentMeters()
     {
         return $this->hasOne(MetersData::class, ['id' => 'current_meters_id']);
+    }
+
+    /**
+     * @return static|null
+     */
+    public static function getLast(): ?self
+    {
+        return static::find()->last()->one();
     }
 
     /**

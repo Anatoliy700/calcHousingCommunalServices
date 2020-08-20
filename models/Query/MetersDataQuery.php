@@ -37,9 +37,7 @@ class MetersDataQuery extends \yii\db\ActiveQuery
      */
     public function last(): self
     {
-        $this->addOrderBy(['id' => SORT_DESC])->limit(1);
-
-        return $this;
+        return $this->addOrderBy(['id' => SORT_DESC])->limit(1);
     }
 
     /**
@@ -48,8 +46,6 @@ class MetersDataQuery extends \yii\db\ActiveQuery
      */
     public function previous(int $currentId): self
     {
-        $this->andWhere(['<', 'id', $currentId])->last();
-
-        return $this;
+        return $this->andWhere(['<', 'id', $currentId])->last();
     }
 }

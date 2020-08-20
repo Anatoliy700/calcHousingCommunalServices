@@ -107,7 +107,7 @@ class MetersData extends ActiveRecord
      */
     public static function getLast(): ?self
     {
-        return $model = static::find()->last()->one();
+        return static::find()->last()->one();
     }
 
     /**

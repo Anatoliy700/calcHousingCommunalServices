@@ -29,7 +29,7 @@ class CalculateService
      */
     protected function init(): void
     {
-        if (!$this->calcResult->validate()) {
+        if ($this->calcResult->isNewRecord && !$this->calcResult->validate()) {
             $message = '';
             foreach ($this->calcResult->getFirstErrors() as $attrName => $firstErrorMessage) {
                 $message .= $firstErrorMessage . PHP_EOL;
@@ -43,9 +43,9 @@ class CalculateService
      * @return string
      * @throws \yii\base\InvalidConfigException
      */
-    public function getSettlementMonth(string $format = 'LLLL y'): string
+    public function getSettlementMonth(string $format = CalcResult::DATE_FORMAT_VIEW): string
     {
-        return \Yii::$app->formatter->asDate($this->calcResult->settlement_month, "{$format}");
+        return \Yii::$app->formatter->asDate($this->calcResult->settlement_month, $format);
     }
 
     /**

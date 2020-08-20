@@ -2,11 +2,12 @@
 
 /**
  * @var $this yii\web\View
- * @var $calcModel \app\models\CalcResult
+ * @var $calcModel CalcResult
  * @var $metersModel \app\models\MetersData
  * @var $lastMetersModel \app\models\MetersData
  */
 
+use app\models\CalcResult;
 use kartik\date\DatePicker;
 use kartik\datecontrol\DateControl;
 use yii\helpers\Html;
@@ -25,8 +26,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $form->field($calcModel, 'settlement_month')
         ->widget(DateControl::class, [
             'type' => DateControl::FORMAT_DATE,
-            'displayFormat' => 'php:F Y',
-            'saveFormat' => 'php:Y-m-d',
+            'displayFormat' => CalcResult::DATE_FORMAT_VIEW,
+            'saveFormat' => CalcResult::DATE_FORMAT_SAVE,
             'language' => 'ru',
             'widgetOptions' => [
                 'type' => DatePicker::TYPE_INPUT,
@@ -34,6 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'autocomplete' => 'off',
                 ],
                 'pluginOptions' => [
+                    'minViewMode' => 1,
                     'autoclose' => true,
                 ],
             ],

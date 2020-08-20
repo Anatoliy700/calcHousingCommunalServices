@@ -32,8 +32,8 @@ class CalculationController extends Controller
             return $this->render('index', [
                 'dataProvider' => $dataProvider,
             ]);
-        } catch (Exception $e){
-               throw new ExitException('Не установлены миграции. Выполните в консоли "php yii migrate"');
+        } catch (Exception $e) {
+            throw new ExitException('Не установлены миграции. Выполните в консоли "php yii migrate"');
         }
     }
 
@@ -57,10 +57,11 @@ class CalculationController extends Controller
 
     /**
      * @return string|Response
+     * @throws \yii\base\InvalidConfigException
      */
     public function actionCreate()
     {
-        $calcModel = new CalcResult();
+        $calcModel = (new CalcResult())->fillSettleMonth();
         $metersModel = new MetersData();
         $request = $this->getRequest();
 
@@ -149,6 +150,8 @@ class CalculationController extends Controller
      */
     protected function showMessage(string $type, string $message): void
     {
-        \Yii::$app->session->setFlash($type, $message);
+        if (!empty($message)) {
+            \Yii::$app->session->setFlash($type, $message);
+        }
     }
 }
