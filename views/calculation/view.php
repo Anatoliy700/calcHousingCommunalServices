@@ -67,8 +67,8 @@ $this->params['breadcrumbs'][] = $this->title;
         </tr>
         <tr>
             <td><?= $calcService->getLabel('sewerage') ?></td>
-            <td><?= $calcService->getCurrentSewerage() ?></td>
-            <td><?= $calcService->getPreviewSewerage() ?></td>
+            <td></td>
+            <td></td>
             <td><?= $calcService->getDiffSewerage() ?></td>
             <td><?= $calcService->getTariffSewerage('currency') ?></td>
             <td><?= $calcService->getCostSewerage('currency') ?></td>
